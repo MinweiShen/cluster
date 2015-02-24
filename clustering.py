@@ -1,23 +1,43 @@
-from cluster import *
-import matplotlib.pyplot as plt
 import random
 
+import matplotlib.pyplot as plt
+
+from cluster import *
+
+
+# The following variables are for different k_means algorithms
 K_MEANS_PLUS_PLUS = 100
 LLOYD = 200
 
 class Clustering(object):
-	'''clustering object used to create clusters based on points
-	'''
-	def __init__(self,points = []):
+	""" The clustering method class. Different clustering methods are implemented.
+	"""	
+	def __init__(self,points):
+		""" Init Clustering instance.
+
+		Args:
+			points (list): a list of Point instances.
+		"""
 		self.__points = points
 		if len(points) == 0:
 			print "Should not initialize clustering without points!"
 
 
 	def hierarchical_cluster(self,num,linkage = DISTANCE_MEAN_CENTER):
-		'''TODO
-		The algorithm is O(n^3) while the best is O(n^2logn)
-		'''
+		""" Return the hierarchical clusters.
+
+		Note:
+			The algorithm is O(n^3) while the best one is O(n^2logn).
+			I will re-write this soon.
+
+		Args:
+			num (int): the number of clusters you want to have.
+			linkage (int): how to define the distance between clusters.
+				See more information in Cluster.py
+
+		Returns:
+			clusters (list): list of Cluster instances.
+		"""
 		if num < 1 or num > len(self.__points):
 			return None
 
@@ -52,18 +72,31 @@ class Clustering(object):
 		return clusters
 
 	def k_center(self,k):
-		'''
-		   Gonzalez Algorithm
-		'''
+		""" Return clusters.
+		
+		Node: 
+			This function uses the Gonzalez Algorithm.
+
+		Args:
+			k (int): the number of clusters wanted.
+
+		Returns:
+			centers (list): list of the center point for each cluster.
+			clusters (list): list of the clusters
+			cost (float): the cost of the entire clustering. In this case, it's the maximum distance between
+						  one point and any center point.
+
+		"""
 		points = self.__points[:]
 		centers = []
 		centers.append(points.pop(0))
 		
-		'''TODO
+		""" TODO
+
 		The algorithm works but it is not efficient because distance between p and c does NOT 
 		need to be calculated every time!
 		Update the distance when a new c is added to the centers
-		'''
+		"""
 
 		#find k centers
 		while len(centers) < k:
@@ -112,6 +145,24 @@ class Clustering(object):
 		return centers,clusters,cost
 
 	def k_means(self,k,method=K_MEANS_PLUS_PLUS,init_centers = []):
+		""" Return clusters.
+
+		Args:
+			k (int): the number of clusters as a result.
+			method (int): the algorithm used to cluster.
+				K_MEANS_PLUS_PLUS: the k-means++ algorithm
+				LLOYD: the Lloyd algorithm
+			init_centers (list): list of initial center.
+
+		Note:
+			The length of init_centers CAN'T exceed k.
+
+		Returns:
+			centers (list): list of the center point for each cluster.
+			clusters (list): list of the clusters
+			cost (float): the cost of the entire clustering. In this case, it's the sum of the square distance
+						  of any point from the nearest center.
+		"""
 		points = self.__points[:]
 		centers = init_centers
 		if method == K_MEANS_PLUS_PLUS:
@@ -174,9 +225,10 @@ class Clustering(object):
 			return centers,clusters,cost
 
 		elif method == LLOYD:
-			'''TODO
-			   set some repetion rounds. currently, it stops when it converges
-			'''
+			"""TODO
+
+			set some repetion rounds. currently, it stops when it converges
+			"""
 			#init the centers
 			for i in xrange(k-len(centers)):
 				centers.append(points[random.randint(0,len(points)-1)])
@@ -240,10 +292,25 @@ class Clustering(object):
 			return subsets.keys(), [Cluster(i) for i in subsets.values()],cost
 
 	def k_median(self,k,init_centers=[]):
-		'''The idea of the algorithm is, to find the point in the subset,
-		   which minimize the sum of distances to other points in the same subset and
-		   use it as the new center. we keep doing this until it converges.
-		'''
+		""" Return clusters.
+
+		Note:
+			The idea of the algorithm is, to find the point in the subset,
+		    which minimize the sum of distances to other points in the same subset and
+		    use it as the new center. we keep doing this until it converges.
+
+		Args:
+			k (int): the number of clusters wanted.
+			init_centers (list): list of initial centers.
+
+		Note:
+			The length of init_centers CAN'T exceed k.
+
+		Returns:
+			centers (list): list of the center point for each cluster.
+			clusters (list): list of the clusters
+			cost (float): the cost of the entire clustering. In this case, it is the sum of distance of any point to its center.
+		"""
 
 		points = self.__points[:]
 		centers = init_centers
@@ -311,19 +378,28 @@ class Clustering(object):
 			for p in subset:
 				cost += p.distance(c)
 
-		return subsets.keys(), [Cluster(i) for i in subsets.values()],cost
+		centers = subsets.keys()
+		clusters =  [Cluster(i) for i in subsets.values()]
+		return centers, clusters, cost
 
 
 
 	def draw_2_dimention(self,clusters):
-		'''Given the clusters, draw them.
-		   Note that only 2 dimentional clusters can be drawn
-		'''
+		""" Return a graph for given clusters.
+
+		Note:
+			It only works for 2 dimentional clusters. Also, when the number of clusters exceeds 8, I can't tell clusters with the same color.
+
+		Args:
+			clusters (list): list of clusters.
+		"""
 		colors = ['b','r','g','c','m','y','k','w']
 		clen = 8
-		'''TODO
-		   Actually, if the number of clusters is over 8, I can't tell the difference between clusters with the same color
-		'''
+		"""TODO
+		   
+		Actually, if the number of clusters is over 8, I can't tell the difference between clusters with the same color.
+		Is there a way to solve this?
+		"""
 		for i in xrange(len(clusters)):
 			cluster = clusters[i]
 			x = []
@@ -341,3 +417,42 @@ class Clustering(object):
 	def points(self):
 		return self.__points[:]
 
+if __name__ == '__main__':
+	print "Example"
+
+	# Create list of points
+	f = open("data.txt")
+	points = []
+	for line in f.readlines():
+		l = line.split()
+		index = int(l[0])
+		x = float(l[1])
+		y = float(l[2])
+		p = Point([x,y],index)
+		points.append(p)
+
+	# init Clustering instance
+	cl = Clustering(points)
+
+	#clusters = cl.hierarchical_cluster(3,DISTANCE_MAX)
+	#clusters = cl.hierarchical_cluster(3,DISTANCE_MIN)
+	#clusters = cl.hierarchical_cluster(3,DISTANCE_MEAN_CENTER)
+	centers,clusters,cost= cl.k_center(3)
+	#centers,clusters,cost= cl.k_means(3,method=LLOYD) 
+	#centers,clusters,cost= cl.k_means(3,method=K_MEANS_PLUS_PLUS)
+	#centers,clusters,cost= cl.k_median(3)
+
+	# Report centers
+	#for p in centers:
+		#print p
+
+	# Report points in a cluster
+	cluster_index = 0
+	for c in clusters:
+		print "cluster %d" % cluster_index
+		for p in c.points:
+			print p
+		cluster_index += 1
+
+	# Draw the graph for the clustering
+	cl.draw_2_dimention(clusters)
