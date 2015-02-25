@@ -208,7 +208,7 @@ class Clustering(object):
 
                 centers.append(points.pop(chozen_point))
 
-            #construct the clusters
+            # Construct the clusters
             clusters = []
             for c  in centers:
                 new_cluster = Cluster([c])

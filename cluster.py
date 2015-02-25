@@ -15,21 +15,27 @@ class Cluster(object):
 		return "The cluster is of size %d\n" % self.__size
 
 
+
 	def __init__(self,points,linkage=DISTANCE_MAX):
+
 		""" Init Cluster instances.
 
 		Args:
 			points (list): a list of Point instances.
+
 			linkage (int): define the distance between Clusters. Now, only 3 linkages are supported.
 				DISTANCE_MAX: distance between Clusters is the distance between farest Points from both Clusters.
 				DISTANCE_MIN: distance between Clusters is the distance between nearest Points from both Clusters.
 				DISTANCE_MEAN_CENTER: distance between Clusters is the distance between mean centers of both Clusters.
+
 
 		Attributes:
 			__points (list): list of Point instances.
 			__size (int): number of points
 			__center (Point): the center Point
 			__linkage (int): linkage
+			__center (Point): the center Point, mainly used for k_center algorithm
+
 		"""
 		self.__points = []
 		self.__size = 0
@@ -51,6 +57,7 @@ class Cluster(object):
 		
 
 
+
 	def union(self,c):
 		""" Union with another cluster.
 
@@ -65,17 +72,10 @@ class Cluster(object):
 
 		Args:
 			points (list): list of Point instances to add.
+
 		"""
 		self.__points += points
 		self.__size += len(points)
-		# if update_center:
-		# 	m = [0 for i in self.__points[0].coordinates]
-		# 	for p in self.__points:
-		# 		coordinates = p.coordinates
-		# 		for i in xrange(len(coordinates)):
-		# 			m[i] += coordinates[i]
-		# 	m = map(lambda x:x/self.__size,m)
-		# 	self.__center = Point(m)
 
 	def distance(self,cl):
 		""" Calculate the distance between two Clusters.
@@ -98,6 +98,7 @@ class Cluster(object):
 			m1 = map(lambda x:x/self.__size,m1)
 			center1 = Point(m1)
 
+
 			m2 = [0 for i in cl.points[0].coordinates]
 			for p in cl.points:
 				coordinates = p.coordinates
@@ -116,7 +117,9 @@ class Cluster(object):
 					if d > result:
 						result = d
 			return result
+
 		elif self.__linkage == DISTANCE_MIN:
+
 			result = -1
 			for p1 in self.__points:
 				for p2 in cl.points:
@@ -129,6 +132,7 @@ class Cluster(object):
 		else:
 			print "No such linkage"
 			return -1
+
 
 	def set_center(self,c):
 		""" Set the center of the cluster

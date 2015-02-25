@@ -35,8 +35,10 @@ class Point(object):
 		Args:
 			coordinates (list): a list of coordinates.
 			index (int, optional): the index of the point.
+
 			distance_function (function, optional): the distance function used to determine the distance_function
 													between 2 points.
+
 
 		Attributes:
 			__coordinates (list): a list of coordinates.
