@@ -39,11 +39,13 @@ class Clustering(object):
         Returns:
             clusters (list): list of Cluster instances.
         """
-        if k < 1 or k > len(self.__points):
+
+        points = self.__points[:]
+        if k < 1 or k > len(points):
             return None
 
         clusters = []
-        for p in self.__points:
+        for p in points:
             clusters.append(Cluster([p],linkage=linkage))
 
         while len(clusters) > k:
@@ -456,14 +458,14 @@ if __name__ == '__main__':
 
     hierarchical_cluster on the example data set may be very slow. It works for smaller data set.
     """
-    #clusters = cl.hierarchical_cluster(4,DISTANCE_MAX)
-    #clusters = cl.hierarchical_cluster(4,DISTANCE_MIN)
-    #clusters = cl.hierarchical_cluster(4,DISTANCE_MEAN_CENTER)
+    #clusters = cl.hierarchical_cluster(2,DISTANCE_MAX)
+    #clusters = cl.hierarchical_cluster(2,DISTANCE_MIN)
+    #clusters = cl.hierarchical_cluster(2,DISTANCE_MEAN_CENTER)
     #clusters,cost= cl.k_center(3)
     #clusters,cost= cl.k_means(3,method=LLOYD)
     #clusters,cost= cl.k_means(3,method=K_MEANS_PLUS_PLUS)
-    #clusters,cost= cl.k_means(3,method=K_MEANS_PLUS_PLUS,init_centers=[])
-    clusters,cost= cl.k_median(3)
+    clusters,cost= cl.k_means(3,method=K_MEANS_PLUS_PLUS,init_centers=[])
+    #clusters,cost= cl.k_median(3)
 
     
     # Report points in a cluster
