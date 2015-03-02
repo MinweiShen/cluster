@@ -18,7 +18,7 @@ class Clustering(object):
         Args:
             points (list): a list of Point instances.
         """
-        self.__points = points
+        self.__points = [p for p in points]
         if len(points) == 0:
             print "Should not initialize clustering without points!"
 
@@ -80,12 +80,12 @@ class Clustering(object):
 
         Returns:
             clusters (list): list of the clusters
-            cost (float): the cost of the entire clustering. In this case, it's the maximum distance of 
+            cost (float): the cost of the entire clustering. In this case, it's the maximum distance of
                           any (point, center) pair.
 
         """
         points = self.__points[:]
-        centers = init_centers
+        centers = init_centers[:]
         if len(centers) == 0:
             centers.append(points.pop(0))
         else:
@@ -171,7 +171,7 @@ class Clustering(object):
                           of any (point, center) pair.
         """
         points = self.__points[:]
-        centers = init_centers
+        centers = init_centers[:]
         for p in init_centers:
             if p in points:
                 points.remove(p)
@@ -327,13 +327,15 @@ class Clustering(object):
         """
 
         points = self.__points[:]
-        centers = init_centers
+        # If don't copy the list, run k_median will have the same result
+        centers = init_centers[:]
+
         for p in init_centers:
             if p in points:
                 points.remove(p)
 
         for i in xrange(k-len(centers)):
-                centers.append(points.pop(random.randint(0,len(points)-1)))
+            centers.append(points.pop(random.randint(0,len(points)-1)))
 
         subsets = {}
         for c in centers:
@@ -343,6 +345,7 @@ class Clustering(object):
 
         cost = 0
         while len(centers_to_add) > 0:
+            cost = 0
             centers_to_add = []
             centers_to_delete = []
             for c in subsets:
@@ -467,17 +470,19 @@ if __name__ == '__main__':
     clusters,cost= cl.k_means(3,method=K_MEANS_PLUS_PLUS,init_centers=[])
     #clusters,cost= cl.k_median(3)
 
-    
     # Report points in a cluster
     cluster_index = 0
     for c in clusters:
         print "cluster %d" % cluster_index
         print "the center is ",c.center
         for p in c.points:
-            print p
+             print p
         cluster_index += 1
 
     print "the cost is %f" % cost
-    
+
     # Draw the graph for the clustering
+    # If the len(clusters) > 8, you may not be able to tell the difference because
+    # there are only 8 different colors...
     cl.draw_2_dimentional_graph(clusters)
+
