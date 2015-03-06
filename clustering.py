@@ -120,7 +120,7 @@ class Clustering(object):
                     max_distance = min_distance
                     index = i
 
-            centers.append(points.pop(i))
+            centers.append(points.pop(index))
 
         # Construct the clusters.
         clusters = []
@@ -137,17 +137,17 @@ class Clustering(object):
         while(len(points) != 0):
             p = points.pop(0)
             distance = -1
-            index = -1
             for i in xrange(len(clusters)):
                 c = clusters[i].center
                 d = p.distance(c)
-                cost = d if d > cost else cost
                 if distance == -1:
                     distance = d
                     index = i
                 elif d < distance:
                     distance = d
                     index = i
+
+            cost = distance if distance > cost else cost
 
             clusters[index].add_points([p])
         return clusters,cost
@@ -273,7 +273,7 @@ class Clustering(object):
                             distance = d
                             center = c
 
-                    cost += d
+                    cost += distance
                     subsets[center].append(p)
 
                 # Check if the center needs to be updated
@@ -296,6 +296,8 @@ class Clustering(object):
                     subsets[c] = []
 
                 for c in centers_to_delete:
+                    if c.index != -1:
+                        points.append(c)
                     del subsets[c]
 
             clusters = []

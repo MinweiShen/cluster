@@ -1,7 +1,7 @@
 from point import *
 
 
-# The following variables are used to specify 
+# The following variables are used to specify
 # how to calculate the distance between clusters
 DISTANCE_MAX = 1
 DISTANCE_MIN = 2
@@ -42,7 +42,7 @@ class Cluster(object):
         self.__center = None
         self.__linkage = linkage
 
-        if points is not None:
+        if len(points) > 0:
             self.__points = points[:]
             self.__size = len(points)
 
@@ -54,7 +54,7 @@ class Cluster(object):
                     m[i] += coordinates[i]
             m = map(lambda x:x/self.__size,m)
             self.__center = Point(m)
-        
+
 
 
 
@@ -85,7 +85,7 @@ class Cluster(object):
 
         Returns:
             float: distance between two Clusters.
-        """     
+        """
         if self.__size == 0 or cl.size == 0:
             return -1
 
@@ -141,6 +141,8 @@ class Cluster(object):
             c (Point): the new center for the cluster
         """
         self.__center = c
+        if c not in  self.__points:
+            self.__points.append(c)
 
 
     @property
