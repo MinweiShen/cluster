@@ -104,7 +104,7 @@ class Cluster(object):
                 coordinates = p.coordinates
                 for i in xrange(len(coordinates)):
                     m2[i] += coordinates[i]
-            m2 = map(lambda x:x/self.__size,m2)
+            m2 = map(lambda x:x/cl.size,m2)
             center2 = Point(m2)
 
             return center1.distance(center2)
